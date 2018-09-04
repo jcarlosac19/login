@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <windows.h>
-#include "pasajero.h"
 #include "design.h"
 #define ARRIBA 72
 #define ABAJO 80
@@ -17,7 +16,7 @@ string horarios[3];
 string disponibles[]{"01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20"};
 string pasajeros[1000][6];
 string nombre, ncuenta, contrasena;
-int fila=0, pos=0, np = 1, lleno=0;
+int fila=0, pos=0, np = 1, lleno=0, asiento = 0;
 
 class menus{
 	public:
@@ -33,7 +32,7 @@ menus m;
 void reservar(){
 
 int dispo = 0;
-int n, h, a;
+int n, h;
 string ruta, hr, bus;
 
 	d.gotoxy(40,2);cout<<"Reservando asiento - "<<usuarios[pos][0];
@@ -83,7 +82,8 @@ for(int i = 0; i < 6; i++){d.gotoxy(8,6+i);cout<<i+1<<") "<<buses[i][1];}
 							if((pasajeros[i][1]==bus) && (pasajeros[i][2]==ruta) && (pasajeros[i][3]==hr)){
 							disponibles[n]= "--";				
 							}	
-						}	
+						}
+							
 					}
 							dispo = 20 - lleno;
 						if(dispo==0){
@@ -92,16 +92,49 @@ for(int i = 0; i < 6; i++){d.gotoxy(8,6+i);cout<<i+1<<") "<<buses[i][1];}
 							m.menu_pasajero();
 							system("cls");		
 						}else{
-							d.gotoxy(5,6);"Asientos disponibles: ";
+							d.gotoxy(5,6);printf("Asientos disponibles: ");
 							d.gotoxy(5,7);
 							for(int i = 0; i < 10;i++){cout<<disponibles[i]<<" | ";} 
 							d.gotoxy(5,8);
 							for(int i = 10; i < 20;i++){cout<<disponibles[i]<<" | ";} 
 							cout<<endl;
-							system("pause");
+							
 					 		}	
+					 		d.gotoxy(5,10);printf("Ingrese el asiento que desea reservar: ");
+					 		d.gotoxy(44,10);cin>>asiento;
+					 		
+					 		 if(asiento < 1 || asiento >20 ){
+					 		 d.gotoxy(5,12);printf("El asiento solicitado no existe.");	
+					 		 
+							  }else{
+							    asiento--;
+							    
+							    	if(disponibles[asiento]=="--"){
+							    		
+							    		d.gotoxy(5,12);printf("El asiento que eligio esta ocupado.");
+										Sleep(1500);
+										m.menu_pasajero();
+										system("cls");	
+							    		
+									}else{
+										d.gotoxy(5,12);printf("Su asiento ha sido reservado exitosamente.");
+										np++;
+										
+										pasajeros[np][0]=usuarios[pos][0];
+										pasajeros[np][1]=bus;
+										pasajeros[np][2]=ruta;
+										pasajeros[np][3]=hr;
+										pasajeros[np][4]=asiento+1;
+										pasajeros[np][5]="Reservado";
+										disponibles[asiento]="--";
+									}
+									system("pause");
+							  }
+					 			
 						}
 						//Revisando si el usuario esta dentro de la matriz asientos.
+						
+						
 						
  					}
  				}
@@ -298,6 +331,7 @@ void registrar(){
 		         case 1:
 		         	system("cls");
 		         	reservar();
+		         	cin.ignore();
 		            break;
 		         case 2:
 		         	
@@ -317,6 +351,7 @@ void registrar(){
 		            d.cursor(false);
 		            m.menu_principal();
 		            Sleep(2000);
+		            cin.ignore();
 		            break;
 		      }
 		   } while(repite);
